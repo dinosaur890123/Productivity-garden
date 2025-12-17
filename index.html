@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tab Garden</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+    <h1>Tab garden</h1>
+    <div class="status-box">
+        <div>Focus Points: <span id="focus-points">0</span></div>
+        <div id="status-message">Switch tabs to grow your garden!</div>
+    </div>
+    <div>Procrastination Level (Don't linger!)</div>
+    <div class="meter-container">
+        <div id="wither-bar"></div>
+    </div>
+    <div class="garden" id="garden-grid"></div>
+    <div class="shop">
+        <button onclick="selectSeed('flower', 10)" id="button-flower">Flower (10pts)</button>
+        <buutton onclick="selectSeed('tree', 50)" id="button-tree">Tree (50pts)</button>
+        <button onclick="selectSeed('clear', 5)" id="button-clear">Clear (5pts)</button>
+    </div>
+    <div class="instructions">
+        <strong>How to play:</strong><br>
+        1. Switch to another tab to work. You earn 1 point per second.<br>
+        2. Come back briefly to spend points planting seeds.<br>
+        3. If you stay on this tab too long, the bar fills and plants wither!
+    </div>
+</div>
+</body>
+<script src="script.js"></script>
+</html>
