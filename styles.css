@@ -1,0 +1,23 @@
+:root {
+    ---bg-color: #f4f9f4;
+    --text-color: #2c3e50;
+    --accent-color: #27ae60;
+    --danger-color: #e74c3c;
+}
+body {
+    font-family: Calibri;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    transition: background-color 0.5s ease;
+}
+.container {
+    text-align: center;
+    max-width: 600px;
+    width:
+}
