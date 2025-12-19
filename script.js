@@ -2,10 +2,16 @@ let points = 0;
 let lastHiddenTime = 0;
 let visibleStartTime = Date.now();
 let witherTimer = 0;
+let currentTool = null;
+let toolCost = 0;
 let currentSelection = null;
 let selectionCost = 0;
 let garden = Array(9).fill({type: null});
 const WITHER_LIMIT_MS = 30000;
+const PLANT_STATS = {
+    flower: {cost: 10, growTime: 20, sellPrice: 40, emoji: '🌸'},
+    tree: {cost: 50, growTime: 120, sellPrice: 200, emoji: '🌳'}
+}
 const DOM = {
     points: document.getElementById('focus-points'),
     status: document.getElementById('status-message'),
@@ -15,16 +21,15 @@ const DOM = {
 };
 
 function init() {
-    renderGarden();
-    requestAnimationFrame(gameLoop);
-    const saved = localStorage.getItem('tabGardenSave');
+    const saved = localStorage.getItem('tabGardenSave_v2');
     if (saved) {
         const data = JSON.parse(saved);
         points = data.points || 0;
-        garden = data.garden || Array(9).fill({type: null});
-        updatePointsDisplay();
-        renderGarden();
-    }
+        garden = data.garden || Array(9).fill(null);
+    }   
+    updatePointsDisplay();
+    renderGarden();
+    requestAnimationFrame(gameLoop);
 }
 document.addEventListener("visbilitychange", () => {
     if (document.hidden) {
@@ -37,6 +42,7 @@ document.addEventListener("visbilitychange", () => {
             const now = Date.now();
             const secondsAway = Math.floor((now - lastHiddenTime) / 1000);
             if (secondsAway > 0) {
+                processGrowth(secondsAway);
                 points += secondsAway;
                 DOM.status.innerText = `Welcome back, you gained ${secondsAway} focus points.`;
                 saveGame();
