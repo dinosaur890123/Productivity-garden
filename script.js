@@ -129,8 +129,8 @@ window.useWater = function() {
     }
 }
 window.selectSeed = function(type, cost) {
-    if (currentSelection === type) {
-        currentSelection = null;
+    if (currentTool === type) {
+        currentTool = null;
         selectionCost = 0;
         updateShopUI();
         return;
