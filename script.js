@@ -31,7 +31,7 @@ function init() {
     renderGarden();
     requestAnimationFrame(gameLoop);
 }
-document.addEventListener("visbilitychange", () => {
+document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
         lastHiddenTime = Date.now();
         DOM.status.innerText = "Growing resources...";
