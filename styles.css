@@ -124,11 +124,11 @@ button {
     font-weight: 600;
     transition: all 0.2s;
 }
-button #button-harvest {
+button#button-harvest {
     border-color: var(--gold-color);
     color: #f39c12;
 }
-button #button-harvest.selected {
+button#button-harvest.selected {
     background: var(--gold-color);
     color: black;
     border-color: var(--gold-color);
