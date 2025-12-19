@@ -4,8 +4,6 @@ let visibleStartTime = Date.now();
 let witherTimer = 0;
 let currentTool = null;
 let toolCost = 0;
-let currentSelection = null;
-let selectionCost = 0;
 let garden = Array(9).fill({type: null});
 const WITHER_LIMIT_MS = 30000;
 const PLANT_STATS = {
@@ -131,18 +129,18 @@ window.useWater = function() {
 window.selectSeed = function(type, cost) {
     if (currentTool === type) {
         currentTool = null;
-        selectionCost = 0;
+        toolCost = 0;
         updateShopUI();
         return;
     }
-    currentSelection = type;
-    selectionCost = cost;
+    currentTool = type;
+    toolCost = cost;
     updateShopUI();
 };
 function updateShopUI() {
     document.querySelectorAll('.shop button').forEach(button => button.classList.remove('selected'));
-    if (currentSelection) {
-        document.getElementById(`button-${currentSelection}`).classList.add('selected');
+    if (currentTool) {
+        document.getElementById(`button-${currentTool}`).classList.add('selected');
     }
 }
 function handlePlotClick(index) {
