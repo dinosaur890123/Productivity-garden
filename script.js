@@ -51,8 +51,21 @@ document.addEventListener("visbilitychange", () => {
         visibleStartTime = Date.now();
         document.title = "Tab Garden";
         updatePointsDisplay();
+        renderGarden();
     }
 });
+function processGrowth(seconds) {
+    garden = garden.map(plot => {
+        if (plot && plot.stage === 'growing') {
+            plot.growth += seconds;
+            if (plot.growth >= plot.maxGrowth) {
+                plot.growth = plot.maxGrowth;
+                plot.stage = 'ripe';
+            }
+        }
+        return plot;
+    });
+}
 function gameLoop() {
     if (!document.hidden) {
         const now = Date.now();
@@ -61,7 +74,7 @@ function gameLoop() {
         DOM.witherBar.style.width = `${percent}%`;
         if (percent > 80) {
             DOM.body.style.backgroundColor = '#fff0f0';
-            DOM.status.innerText = "Warning: Get back to work or plants will wither!"; // haha
+            DOM.status.innerText = "Danger! Your plants are going to wither!";
         } else {
             DOM.body.style.backgroundColor = '#f4f9f4';
         }
@@ -81,14 +94,38 @@ function witherGarden() {
     garden = garden.map(plot => {
         if (plot.type && plot.type !== 'withered') {
             changed = true;
-            return {type: 'withered'};
+            return {...plot, stage: 'withered'};
         }
         return plot;
     });
     if (changed) {
-        DOM.status.innerText = "Oh no! You procrastinated too long. The garden withered.";
+        DOM.status.innerText = "Oh no! You procrastinated for too long. The garden withered. :(";
         renderGarden();
         saveGame();
+    }
+}
+window.selectTool = function(tool, cost) {
+    if (currentTool === tool) {
+        currentTool = null;
+        toolCost = 0;
+    } else {
+        currentTool = tool;
+        toolCost = cost;
+    }
+    updateShopUI();
+};
+window.useWater = function() {
+    const cost = 5;
+    if (points >= cost) {
+        points -= cost;
+        visibleStartTime = Date.now();
+        DOM.witherBar.style.width = '0%';
+        DOM.body.style.backgroundColor = '#f5f5f5';
+        DOM.status.textContent = "Timer has been reset. It's time to get off this page";
+        updatePointsDisplay();
+        saveGame();
+    } else {
+        alert("Not enough points to water!");
     }
 }
 window.selectSeed = function(type, cost) {
@@ -108,7 +145,7 @@ function updateShopUI() {
         document.getElementById(`button-${currentSelection}`).classList.add('selected');
     }
 }
-function handlePlotClick() {
+function handlePlotClick(index) {
     if (!currentSelection) return;
     const plot = garden[index];
     if (currentSelection === 'clear') {
