@@ -3,6 +3,8 @@
     --text-color: #2c3e50;
     --accent-color: #27ae60;
     --danger-color: #e74c3c;
+    --gold-color: #f1c40f;
+    --water-color: #3498db;
 }
 body {
     font-family: Calibri;
@@ -76,6 +78,7 @@ h1 {
     cursor: pointer;
     transition: all 0.2s;
     user-select: none;
+    position: relative;
 }
 .plot:hover {
     background: #c8e6c9;
@@ -85,6 +88,25 @@ h1 {
     background: rgb(226, 221, 221);
     border-color: #e5dada;
     cursor: not-allowed;
+}
+.plot.ripe {
+    border-color: var(--gold-color);
+    background: #fff9c4;
+}
+.growth-ring {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    right: 5px;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.105);
+    border-radius: 2px;
+    overflow: hidden;
+}
+.growth-fill {
+    height: 100%;
+    background: var(--accent-color);
+    width: 0%;
 }
 .shop {
     display: flex;
@@ -101,6 +123,15 @@ button {
     cursor: pointer;
     font-weight: 600;
     transition: all 0.2s;
+}
+button #button-harvest {
+    border-color: var(--gold-color);
+    color: #f39c12;
+}
+button #button-harvest.selected {
+    background: var(--gold-color);
+    color: black;
+    border-color: var(--gold-color);
 }
 button:hover {
     background: var(--accent-color);

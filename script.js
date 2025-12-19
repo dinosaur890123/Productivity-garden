@@ -146,31 +146,57 @@ function updateShopUI() {
     }
 }
 function handlePlotClick(index) {
-    if (!currentSelection) return;
+    if (!currentTool) {
+        DOM.status.innerText = "Select a tool first";
+        return;
+    }
     const plot = garden[index];
-    if (currentSelection === 'clear') {
-        if (points >= selectionCost) {
-            points -= selectionCost;
-            garden[index] = {type: null};
-            finishAction();
+    if (currentTool === 'clear') {
+        if (!plot) return;
+        if (points >= toolCost) {
+            points -= toolCost;
+            garden[index] = null;
+            finishAction("Plot cleared.");
         } else {
-            alert("Not enough points!");
+            alert("Not enough points to clear!");
         }
         return;
     }
-    if (plot.type === null) {
-        if (points >= selectionCost) {
-            points -= selectionCost;
-            garden[index] = {type: currentSelection};
-            finishAction();
+    if (currentTool === 'harvest') {
+        if (!plot) return;
+        if (plot.stage === 'ripe') {
+            const profit = PLANT_STATS[plot.type].sellPrice;
+            points += profit;
+            garden[index] = null;
+            finishAction("Harvested! Earned ${profit} points!");
+            triggerConfetti();
+        } else if (plot.stage === 'growing') {
+            DOM.status.innerText = "Not ready yet! Go do some work.";
+        } else if (plot.stage === 'withered') {
+            DOM.status.innerText = "It's dead. Use the Clear tool to remove it."
+        }
+        return;
+    }
+    if (!plot) {
+        if (points >= toolCost) {
+            points -= toolCost;
+            const stats = PLANT_STATS[currentTool];
+            garden[index] = {
+                type: currentTool,
+                stage: 'growing',
+                growth: 0,
+                maxGrowth: stats.growTime
+            };
+            finishAction('Planted ${currentTool}. Get back to work to make it grow!');
         } else {
             alert("Not enough points! Go do some work!");
         }
     } else {
-        DOM.status.innerText = "That plot is taken! Use 'Clear' to remove plants.";
+        DOM.status.innerText = "That plot is taken! Use 'Clear' to remove unnecessary plants.";
     }
 }
-function finishGarden() {
+function finishAction(message) {
+    DOM.status.innerText = message;
     updatePointsDisplay();
     renderGarden();
     saveGame();
@@ -181,11 +207,30 @@ function renderGarden() {
         const div = document.createElement('div');
         div.className = 'plot';
         div.onclick = () => handlePlotClick(index);
-        let content = '';
-        if (plot.type === 'flower') content = '🌸';
-        else if (plot.type === 'tree') content = '🌳';
-        else if (plot.type === 'withered') content = '🥀'; 
-        div.textContent = content;
+        if (plot) {
+            let content = '';
+            let progress = 0;
+            if (plot.stage === 'withered') {
+                content = '🥀';
+            } else if (plot.stage === 'growing') {
+                content = '🌿';
+                progress = (plot.growth / plot.maxGrowth) * 100;
+            } else if (plot.stage === 'ripe') {
+                content = PLANT_STATS[plot.type].emoji;
+                div.classList.add('ripe');
+            }
+            div.textContent = content;
+            
+            if (plot.stage === 'growing') {
+                const bar = document.createElement('div');
+                bar.className = 'growth-ring';
+                const fill = document.createElement('div');
+                fill.className = 'growth-fill';
+                fill.style.width = `${progress}`;
+                bar.appendChild(fill);
+                div.appendChild(bar);
+            }
+        }
         DOM.garden.appendChild(div);
     });
 }
@@ -193,10 +238,14 @@ function updatePointsDisplay() {
     DOM.points.innerText = points;
 }
 function saveGame() {
-    const data = {
-        points: points,
-        garden: garden
-    };
-    localStorage.setItem('tabGardenSave', JSON.stringify(data));
+    localStorage.setItem('tabGardenSave_v2', JSON.stringify(points, garden));
+}
+function triggerConfetti() {
+    DOM.points.style.transform = "scale(1.05)";
+    DOM.points.style.color = "#c5cbcb";
+    setTimeout(() => {
+        DOM.points.style.transform = "scale(1)";
+        DOM.points.style.color = "";
+    }, 200)
 }
 init();
