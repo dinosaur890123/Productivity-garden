@@ -1,4 +1,5 @@
-Productivity Garden
+## Productivity Garden
+
 The more you linger, the less focus points you get... Get back to work!
 Features: 
 - Leave the tab and you earn points
